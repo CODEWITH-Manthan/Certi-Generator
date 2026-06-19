@@ -82,7 +82,7 @@ The frontend application will run on `http://localhost:5173` (or another port sp
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Please feel free to submit a Pull Request.
 
 ## 📜 License
 
