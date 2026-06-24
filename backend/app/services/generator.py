@@ -13,26 +13,56 @@ from app.config import FONTS, FONTS_DIR, TEMP_DIR
 
 # Maps font names used in the designer UI → actual cached .ttf file base name
 FONT_ALIAS_MAP: dict = {
-    # sans / inter family
-    "inter": "sans",
-    "roboto": "sans",
-    "opensans": "sans",
-    "lato": "sans",
-    "nunito": "sans",
-    "sourcesanspro": "sans",
-    "poppins": "sans",
-    "outfit": "sans",
-    # serif family
-    "playfairdisplay": "serif",
-    "merriweather": "serif",
-    "lora": "serif",
-    "crimsontext": "serif",
-    "cormorantgaramond": "serif",
-    # accent / display
-    "montserrat": "accent",
-    "raleway": "accent",
-    "josefinsans": "accent",
-    "cinzel": "accent",
+    # ── Calligraphy & Script ────────────────────────────
+    "greatvibes":        "greatvibes",
+    "dancingscript":     "dancingscript",
+    "pacifico":          "pacifico",
+    "sacramento":        "sacramento",
+    "pinyonscript":      "pinyonscript",
+    "alexbrush":         "alexbrush",
+    "allura":            "allura",
+    "tangerine":         "tangerine",
+    "italianno":         "italianno",
+    "parisienne":        "parisienne",
+
+    # ── Elegant Serif ───────────────────────────────────
+    "playfairdisplay":   "serif",        # pre-existing file
+    "cormorantgaramond": "cormorantgaramond",  # falls back to serif if download failed
+    "cinzel":            "cinzel",
+    "lora":              "lora",
+    "merriweather":      "merriweather",        # falls back to serif if download failed
+    "ebgaramond":        "ebgaramond",
+    "librebaskerville":  "librebaskerville",    # falls back to serif if download failed
+    "crimsontext":       "crimsontext",
+
+    # ── Modern Sans-Serif ────────────────────────────────
+    "inter":             "sans",         # pre-existing file
+    "poppins":           "poppins",
+    "outfit":            "outfit",
+    "montserrat":        "accent",       # pre-existing file
+    "raleway":           "raleway",
+    "nunito":            "nunito",
+    "dmsans":            "dmsans",
+    "plusjakartasans":   "plusjakartasans",
+
+    # ── Display & Decorative ─────────────────────────────
+    "josefinsans":       "josefinsans",
+    "oswald":            "oswald",
+    "bebasneue":         "bebasneue",
+    "abrilfatface":      "abrilfatface",
+    "righteous":         "righteous",
+
+    # ── Classic ──────────────────────────────────────────
+    "roboto":            "roboto",
+    "opensans":          "opensans",
+    "open sans":         "opensans",
+    "lato":              "lato",
+    "ubuntu":            "ubuntu",
+    "sourcesans3":       "sourcesans3",
+    "source sans 3":     "sourcesans3",
+
+    # Legacy aliases (keep backward compat) ──────────────
+    "sourcesanspro":     "sans",
 }
 
 def _resolve_font_key(font_name_raw: str) -> str:

@@ -25,19 +25,13 @@ def test_certificate_generator():
     img.save(img_byte_arr, format='PNG')
     template_bytes = img_byte_arr.getvalue()
 
-    # 3. Create in-memory mock Excel file
-    print("Step 3: Creating mock database spreadsheet...")
-    mock_data = {
-        "Student Name": ["Alice Johnson", "Bob Smith", "Charlie Brown"],
-        "Course Name": ["Intro to Robotics", "Mastering Python", "Quantum Computing"],
-        "Issue Date": ["2026-06-08", "2026-06-09", "2026-06-10"],
-        "Cert ID": ["CERT-001", "CERT-002", "CERT-003"]
-    }
-    df = pd.DataFrame(mock_data)
-    excel_byte_arr = io.BytesIO()
-    with pd.ExcelWriter(excel_byte_arr, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False)
-    excel_bytes = excel_byte_arr.getvalue()
+    # 3. Create mock data list
+    print("Step 3: Creating mock database records...")
+    mock_data = [
+        {"Student Name": "Alice Johnson", "Course Name": "Intro to Robotics", "Issue Date": "2026-06-08", "Cert ID": "CERT-001"},
+        {"Student Name": "Bob Smith", "Course Name": "Mastering Python", "Issue Date": "2026-06-09", "Cert ID": "CERT-002"},
+        {"Student Name": "Charlie Brown", "Course Name": "Quantum Computing", "Issue Date": "2026-06-10", "Cert ID": "CERT-003"}
+    ]
 
     # 4. Create mapping configuration matching our mock data
     mapping_config = {
@@ -84,7 +78,7 @@ def test_certificate_generator():
     try:
         zip_bytes = generate_certificates_zip(
             template_bytes=template_bytes,
-            excel_bytes=excel_bytes,
+            excel_data=mock_data,
             mapping_config=mapping_config
         )
         assert len(zip_bytes) > 0, "Generated ZIP byte stream is empty!"
@@ -103,11 +97,11 @@ def test_certificate_generator():
         # Verify length
         assert len(file_list) == 3, f"Expected 3 certificate PDFs, but found {len(file_list)}"
         
-        # Verify sanitized names
+        # Verify sanitized names — sanitize_filename preserves spaces but strips invalid chars (\/*?:"<>|)
         expected_names = [
             "Certificate_Alice Johnson.pdf",
             "Certificate_Bob Smith.pdf",
-            "Certificate_Charlie Brown.pdf"
+            "Certificate_Charlie Brown.pdf",
         ]
         for name in expected_names:
             assert name in file_list, f"Expected file '{name}' was not found in the ZIP archive!"

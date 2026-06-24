@@ -1,5 +1,5 @@
 import React from "react";
-import { Loader2, CheckCircle2, AlertTriangle, Download, X } from "lucide-react";
+import { Loader2, CheckCircle2, AlertTriangle, Download, X, Sparkles } from "lucide-react";
 
 export interface ProgressStep {
   label: string;
@@ -27,15 +27,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
   const isCompleted = steps.every((s) => s.status === "completed");
   const isFailed = steps.some((s) => s.status === "failed");
-
-  const statusConfig = {
-    completed: { label: "Done!", bg: "#FFD60A", text: "#000" },
-    failed: { label: "Failed", bg: "#FF4D6D", text: "#fff" },
-    running: { label: "Generating...", bg: "#000", text: "#FFD60A" },
-  };
-
-  const currentStatus = isCompleted ? "completed" : isFailed ? "failed" : "running";
-  const sc = statusConfig[currentStatus];
+  const isRunning = !isCompleted && !isFailed;
 
   return (
     <div
@@ -54,7 +46,8 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(0,0,0,0.75)",
+          background: "rgba(15,23,42,0.82)",
+          backdropFilter: "blur(10px)",
         }}
         onClick={isCompleted || isFailed ? onClose : undefined}
       />
@@ -64,207 +57,214 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
         style={{
           position: "relative",
           width: "100%",
-          maxWidth: 460,
+          maxWidth: 480,
           background: "#fff",
-          border: "4px solid #000",
-          boxShadow: "12px 12px 0 #000",
-          borderRadius: 4,
+          borderRadius: 20,
           overflow: "hidden",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
-        {/* Header bar */}
+        {/* Top gradient header */}
         <div
           style={{
-            background: sc.bg,
-            borderBottom: "3px solid #000",
-            padding: "14px 20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            background: isCompleted
+              ? "linear-gradient(135deg, #059669, #10b981)"
+              : isFailed
+              ? "linear-gradient(135deg, #be123c, #f43f5e)"
+              : "linear-gradient(135deg, #1a1a2e, #16213e)",
+            padding: "24px 24px 20px",
+            position: "relative",
+            overflow: "hidden",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {isCompleted ? (
-              <CheckCircle2 style={{ width: 20, height: 20, color: sc.text }} />
-            ) : isFailed ? (
-              <AlertTriangle style={{ width: 20, height: 20, color: sc.text }} />
-            ) : (
-              <Loader2 style={{ width: 20, height: 20, color: sc.text, animation: "spin 1s linear infinite" }} />
-            )}
-            <span
-              style={{
-                fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                fontSize: 15,
-                fontWeight: 800,
-                color: sc.text,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {isCompleted ? "Certificates Ready!" : isFailed ? "Generation Failed" : "Generating Certificates"}
-            </span>
-          </div>
-          {(isCompleted || isFailed) && (
-            <button
-              onClick={onClose}
-              style={{
-                background: "transparent",
-                border: "2px solid",
-                borderColor: sc.text,
-                color: sc.text,
-                cursor: "pointer",
-                padding: 4,
-                display: "flex",
-                alignItems: "center",
-                borderRadius: 2,
-                transition: "all 150ms ease",
-              }}
-              aria-label="Close modal"
-            >
-              <X style={{ width: 14, height: 14 }} />
-            </button>
-          )}
-        </div>
+          {/* Decorative circle */}
+          <div style={{
+            position: "absolute", top: -30, right: -30,
+            width: 140, height: 140, borderRadius: "50%",
+            background: "rgba(255,255,255,0.05)",
+            pointerEvents: "none",
+          }} />
+          <div style={{
+            position: "absolute", top: 10, right: 20,
+            width: 60, height: 60, borderRadius: "50%",
+            background: "rgba(255,255,255,0.04)",
+            pointerEvents: "none",
+          }} />
 
-        {/* Body */}
-        <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
-          {/* Progress bar */}
-          {!isCompleted && !isFailed && (
-            <div>
-              <div
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              {/* Icon bubble */}
+              <div style={{
+                width: 48, height: 48, borderRadius: 14,
+                background: isCompleted ? "rgba(255,255,255,0.2)" : isFailed ? "rgba(255,255,255,0.15)" : "rgba(167,139,250,0.2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                border: "1.5px solid rgba(255,255,255,0.15)",
+              }}>
+                {isCompleted ? (
+                  <CheckCircle2 style={{ width: 24, height: 24, color: "#fff" }} />
+                ) : isFailed ? (
+                  <AlertTriangle style={{ width: 24, height: 24, color: "#fff" }} />
+                ) : (
+                  <Loader2 style={{ width: 24, height: 24, color: "#a78bfa", animation: "spin 1s linear infinite" }} />
+                )}
+              </div>
+              <div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 17, fontWeight: 800, color: "#fff", letterSpacing: "-0.01em" }}>
+                  {isCompleted ? "Certificates Ready!" : isFailed ? "Generation Failed" : "Generating Certificates"}
+                </div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>
+                  {isCompleted ? "All PDFs compiled successfully" : isFailed ? "An error occurred" : "Processing your batch…"}
+                </div>
+              </div>
+            </div>
+
+            {(isCompleted || isFailed) && (
+              <button
+                onClick={onClose}
                 style={{
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1.5px solid rgba(255,255,255,0.2)",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  padding: 8,
                   display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 8,
+                  alignItems: "center",
+                  color: "#fff",
+                  transition: "all 150ms ease",
                 }}
+                aria-label="Close modal"
               >
-                <span
-                  style={{
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: "#000",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
-                >
+                <X style={{ width: 16, height: 16 }} />
+              </button>
+            )}
+          </div>
+
+          {/* Progress bar */}
+          {isRunning && (
+            <div style={{ marginTop: 18 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                   Progress
                 </span>
-                <span
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: "#000",
-                  }}
-                >
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: "#a78bfa" }}>
                   {Math.round(progress)}%
                 </span>
               </div>
-              <div className="brut-progress-track">
+              <div style={{ height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
                 <div
-                  className="brut-progress-fill"
-                  style={{ width: `${progress}%` }}
+                  style={{
+                    height: "100%",
+                    width: `${progress}%`,
+                    background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
+                    borderRadius: 6,
+                    transition: "width 400ms ease",
+                    boxShadow: "0 0 8px rgba(167,139,250,0.5)",
+                  }}
                 />
               </div>
             </div>
           )}
 
-          {/* Steps */}
-          <div
-            style={{
-              background: "#f5f5f0",
-              border: "2px solid #000",
-              borderRadius: 2,
-              padding: 16,
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-            }}
-          >
+          {/* Completed visual */}
+          {isCompleted && (
+            <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 6 }}>
+              <Sparkles style={{ width: 14, height: 14, color: "rgba(255,255,255,0.7)" }} />
+              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
+                Ready to download as ZIP archive
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Steps list */}
+          <div style={{
+            background: "#f8fafc",
+            border: "1.5px solid #e2e8f0",
+            borderRadius: 14,
+            padding: "14px 16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}>
             {steps.map((step, idx) => {
-              const isRunning = step.status === "running";
+              const isStepRunning = step.status === "running";
               const isDone = step.status === "completed";
               const isBad = step.status === "failed";
 
               return (
-                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  {/* Step indicator */}
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      border: "2px solid #000",
-                      borderRadius: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                      background: isDone
-                        ? "#FFD60A"
-                        : isBad
-                        ? "#FF4D6D"
-                        : isRunning
-                        ? "#000"
-                        : "#fff",
-                      transition: "all 150ms ease",
-                    }}
-                  >
-                    {isRunning ? (
-                      <Loader2
-                        style={{
-                          width: 12,
-                          height: 12,
-                          color: "#FFD60A",
-                          animation: "spin 1s linear infinite",
-                        }}
-                      />
+                <div key={idx} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "8px 10px",
+                  borderRadius: 10,
+                  background: isStepRunning ? "linear-gradient(135deg, #f5f3ff, #ede9fe)" : isDone ? "#f0fdf4" : "transparent",
+                  border: isStepRunning ? "1.5px solid #c4b5fd" : isDone ? "1.5px solid #bbf7d0" : "1.5px solid transparent",
+                  transition: "all 200ms ease",
+                }}>
+                  {/* Indicator */}
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 8,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0,
+                    background: isDone ? "#10b981" : isBad ? "#f43f5e" : isStepRunning ? "#7c3aed" : "#e2e8f0",
+                    transition: "all 200ms ease",
+                  }}>
+                    {isStepRunning ? (
+                      <Loader2 style={{ width: 14, height: 14, color: "#fff", animation: "spin 1s linear infinite" }} />
                     ) : isDone ? (
-                      <CheckCircle2 style={{ width: 12, height: 12, color: "#000" }} />
+                      <CheckCircle2 style={{ width: 14, height: 14, color: "#fff" }} />
                     ) : isBad ? (
-                      <X style={{ width: 12, height: 12, color: "#fff" }} />
+                      <X style={{ width: 14, height: 14, color: "#fff" }} />
                     ) : (
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 800,
-                          color: "#888",
-                          fontFamily: "'JetBrains Mono', monospace",
-                        }}
-                      >
+                      <span style={{ fontSize: 10, fontWeight: 800, color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}>
                         {idx + 1}
                       </span>
                     )}
                   </div>
 
-                  {/* Step label */}
-                  <span
-                    style={{
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      fontSize: 13,
-                      fontWeight: isRunning || isDone ? 700 : 500,
-                      color: isDone ? "#000" : isBad ? "#FF4D6D" : isRunning ? "#000" : "#888",
-                    }}
-                  >
+                  {/* Label */}
+                  <span style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 13,
+                    fontWeight: isStepRunning || isDone ? 700 : 500,
+                    color: isDone ? "#059669" : isBad ? "#be123c" : isStepRunning ? "#5b21b6" : "#94a3b8",
+                    flex: 1,
+                  }}>
                     {step.label}
                   </span>
 
-                  {/* Running badge */}
-                  {isRunning && (
-                    <span
-                      style={{
-                        marginLeft: "auto",
-                        background: "#000",
-                        color: "#FFD60A",
-                        fontSize: 9,
-                        fontWeight: 800,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                        padding: "2px 8px",
-                        borderRadius: 0,
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
+                  {/* Badge */}
+                  {isStepRunning && (
+                    <span style={{
+                      background: "#7c3aed",
+                      color: "#fff",
+                      fontSize: 9,
+                      fontWeight: 800,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      padding: "3px 8px",
+                      borderRadius: 20,
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}>
                       Running
+                    </span>
+                  )}
+                  {isDone && (
+                    <span style={{
+                      background: "#dcfce7",
+                      color: "#059669",
+                      fontSize: 9,
+                      fontWeight: 800,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      padding: "3px 8px",
+                      borderRadius: 20,
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}>
+                      Done
                     </span>
                   )}
                 </div>
@@ -274,38 +274,39 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
 
           {/* Error message */}
           {isFailed && errorMsg && (
-            <div
-              style={{
-                background: "#fff0f2",
-                border: "3px solid #FF4D6D",
-                boxShadow: "4px 4px 0 #FF4D6D",
-                borderRadius: 2,
-                padding: "12px 16px",
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12,
-                fontWeight: 600,
-                color: "#FF4D6D",
-              }}
-            >
-              {errorMsg}
+            <div style={{
+              background: "#fff1f2",
+              border: "1.5px solid #fecdd3",
+              borderRadius: 12,
+              padding: "12px 16px",
+              display: "flex",
+              gap: 10,
+              alignItems: "flex-start",
+            }}>
+              <AlertTriangle style={{ width: 16, height: 16, color: "#f43f5e", flexShrink: 0, marginTop: 1 }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600, color: "#be123c", lineHeight: 1.5 }}>
+                {errorMsg}
+              </span>
             </div>
           )}
 
           {/* Actions */}
           {(isCompleted || isFailed) && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 12,
-                borderTop: "2px solid #000",
-                paddingTop: 16,
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
               <button
                 onClick={onClose}
-                className="brut-btn brut-btn-white"
-                style={{ fontSize: 13 }}
+                style={{
+                  padding: "10px 20px",
+                  background: "#f8fafc",
+                  border: "1.5px solid #e2e8f0",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "#475569",
+                  transition: "all 150ms ease",
+                }}
               >
                 Close
               </button>
@@ -313,11 +314,25 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
               {isCompleted && onDownload && (
                 <button
                   onClick={onDownload}
-                  className="brut-btn brut-btn-yellow"
-                  style={{ fontSize: 13 }}
+                  style={{
+                    padding: "10px 22px",
+                    background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+                    border: "none",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    boxShadow: "0 4px 16px rgba(124,58,237,0.4)",
+                    transition: "all 150ms ease",
+                  }}
                 >
-                  <Download style={{ width: 16, height: 16 }} />
-                  <span>Download ZIP</span>
+                  <Download style={{ width: 15, height: 15 }} />
+                  Download ZIP
                 </button>
               )}
             </div>

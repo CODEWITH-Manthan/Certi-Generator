@@ -28,8 +28,8 @@ export const DataEditor: React.FC<DataEditorProps> = ({ columns, data, onChange 
   if (!columns.length) return null;
 
   return (
-    <div className="flex flex-col gap-4 mt-12">
-      <div className="flex items-center justify-between">
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <h3 style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: 20, fontWeight: 900, color: "#000" }}>
             Live Data Editor
@@ -62,13 +62,15 @@ export const DataEditor: React.FC<DataEditorProps> = ({ columns, data, onChange 
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className="group" style={{ borderBottom: "2px solid #000", transition: "background 0.2s" }}>
+              <tr key={rowIndex} style={{ borderBottom: "2px solid #000", transition: "background 0.2s" }}>
                 {columns.map((col, colIndex) => (
                   <td key={colIndex} style={{ padding: 0, borderRight: "2px solid #000" }}>
                     <input
                       type="text"
                       value={row[col] || ""}
                       onChange={(e) => handleCellChange(rowIndex, col, e.target.value)}
+                      onFocus={(e) => (e.currentTarget.style.background = "#fff9d6")}
+                      onBlur={(e) => (e.currentTarget.style.background = "transparent")}
                       style={{
                         width: "100%",
                         background: "transparent",
@@ -78,17 +80,18 @@ export const DataEditor: React.FC<DataEditorProps> = ({ columns, data, onChange 
                         fontSize: 14,
                         fontWeight: 600,
                         color: "#000",
-                        border: "none"
+                        border: "none",
+                        transition: "background 150ms ease",
                       }}
-                      className="focus:bg-yellow-50 transition-colors"
                     />
                   </td>
                 ))}
                 <td style={{ padding: "0 16px", textAlign: "center" }}>
                   <button
                     onClick={() => removeRow(rowIndex)}
-                    style={{ background: "#FF4D6D", border: "2px solid #000", color: "#fff", padding: 6, cursor: "pointer", borderRadius: 0, boxShadow: "2px 2px 0 #000", transition: "transform 0.1s" }}
-                    className="hover:-translate-y-1 hover:shadow-[3px_3px_0_#000] active:translate-y-0.5 active:shadow-[1px_1px_0_#000]"
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "4px 4px 0 #000"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "2px 2px 0 #000"; }}
+                    style={{ background: "#FF4D6D", border: "2px solid #000", color: "#fff", padding: 6, cursor: "pointer", borderRadius: 0, boxShadow: "2px 2px 0 #000", transition: "all 150ms ease" }}
                     title="Remove Row"
                   >
                     <Trash2 style={{ width: 14, height: 14 }} />

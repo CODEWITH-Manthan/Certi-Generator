@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Pacifico&family=Sacramento&family=Pinyon+Script&family=Alex+Brush&family=Allura&family=Tangerine:wght@400;700&family=Italianno&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700&family=Outfit:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Raleway:wght@400;600;700&family=Nunito:wght@400;600;700&family=DM+Sans:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Josefin+Sans:wght@400;600;700&family=Oswald:wght@400;600;700&family=Bebas+Neue&family=Abril+Fatface&family=Righteous&family=Inter:wght@400;600;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Ubuntu:wght@400;700&family=Source+Sans+3:wght@400;700&display=swap');
 
 /* ─────────────────────────────────────────────────────
    BRUTALIST SAAS DESIGN SYSTEM — CertiGen
@@ -372,3 +372,65 @@ html, body {
 /* Color input */
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
 input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
+
+/* ── Designer Panel Professional Overrides ──────────── */
+.designer-panel-select:focus {
+  border-color: #7c3aed !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15) !important;
+}
+
+.designer-panel-select option {
+  padding: 6px 8px;
+}
+
+.designer-panel-select optgroup {
+  font-weight: 700;
+  font-style: normal;
+  color: #7c3aed;
+  background: #f5f3ff;
+  padding: 4px 0;
+}
+
+/* Canvas field overlay hover */
+.field-overlay:hover {
+  border-color: rgba(167, 139, 250, 0.7) !important;
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2) !important;
+}
+
+/* Range input styling */
+input[type='range'] {
+  -webkit-appearance: none;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 6px rgba(124,58,237,0.4);
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  border-radius: 4px;
+  height: 4px;
+}
+
+/* ── ProgressModal Glass Upgrade ─────────────────────── */
+.progress-modal-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.75) !important;
+}
+
