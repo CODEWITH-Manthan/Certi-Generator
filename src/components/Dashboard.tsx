@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { Dropzone } from "./Dropzone";
 import { Designer, type FieldConfig } from "./Designer";
@@ -17,7 +18,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 
 /* ── Stat Card ──────────────────────────────────────── */
 interface StatCardProps {
@@ -155,7 +156,7 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({ number, label, desc, accent
 
 /* ── Dashboard ───────────────────────────────────────── */
 export const Dashboard: React.FC = () => {
-  // Files State
+  /* Files State */
   const [templateFile, setTemplateFile] = useState<File | null>(null);
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [templateUrl, setTemplateUrl] = useState<string>("");
@@ -281,10 +282,10 @@ export const Dashboard: React.FC = () => {
       const colLower = data.columns.map((c: string) => c.toLowerCase());
       const mapHelper = (fieldKey: string, synonyms: string[]) => {
         const index = colLower.findIndex((c: string) => {
-          // split column name into words to avoid substring matches like "candidate" containing "date"
+          /* split column name into words to avoid substring matches like "candidate" containing "date" */
           const words = c.split(/[^a-z0-9]/).filter(Boolean);
-          return synonyms.some((syn) => 
-            words.includes(syn) || c === syn // also allow exact match
+          return synonyms.some((syn) =>
+            words.includes(syn) || c === syn /* also allow exact match */
           );
         });
         if (index !== -1) newFields[fieldKey].column = data.columns[index];
@@ -448,7 +449,6 @@ export const Dashboard: React.FC = () => {
             pointerEvents: "none",
           }}
         />
-
         <div style={{ position: "relative" }}>
           {/* Tag line */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
@@ -764,7 +764,7 @@ export const Dashboard: React.FC = () => {
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 10,
-                  marginTop: 32, // account for label
+                  marginTop: 32, /* account for label */
                 }}
               >
                 <RefreshCw

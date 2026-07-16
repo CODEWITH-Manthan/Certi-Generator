@@ -3,7 +3,7 @@ import json
 import logging
 import pandas as pd
 # pyrefly: ignore [missing-import]
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Response
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Response, Depends, Header
 # pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 # pyrefly: ignore [missing-import]      
@@ -16,14 +16,25 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Certificate Generator API", version="1.0.0")
 
+import os
+
 # CORS Middleware config
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")] if allowed_origins_env != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow all origins in local dev env
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+BACKEND_API_KEY = os.getenv("BACKEND_API_KEY", "dev_secret_key")
+
+async def verify_api_key(x_api_key: str = Header(None)):
+    if x_api_key != BACKEND_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API Key")
 
 @app.on_event("startup")
 def startup_event():
@@ -31,7 +42,7 @@ def startup_event():
     # Cache fonts dynamically on start
     download_required_fonts()
 
-@app.post("/api/parse-excel")
+@app.post("/api/parse-excel", dependencies=[Depends(verify_api_key)])
 async def parse_excel(excel: UploadFile = File(...)):
     """
     Parses Excel spreadsheet in memory and returns columns and all row data as JSON.
@@ -52,7 +63,7 @@ async def parse_excel(excel: UploadFile = File(...)):
         logger.error(f"Error parsing Excel columns: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to read spreadsheet: {str(e)}")
 
-@app.post("/api/generate")
+@app.post("/api/generate", dependencies=[Depends(verify_api_key)])
 async def generate_certificates(
     template: UploadFile = File(...),
     excel_data: str = Form(...), # Sent as a serialized JSON string containing list of dicts
