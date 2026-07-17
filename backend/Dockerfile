@@ -21,4 +21,4 @@ EXPOSE 8000
 
 # Run the app using uvicorn (you could also use gunicorn here for better process management)
 # Note: In production we remove --reload
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
