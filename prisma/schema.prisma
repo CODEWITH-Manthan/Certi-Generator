@@ -44,10 +44,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
   
-  stripeCustomerId       String?   @unique
-  stripeSubscriptionId   String?   @unique
-  stripePriceId          String?
-  stripeCurrentPeriodEnd DateTime?
+  razorpayCustomerId       String?   @unique
+  razorpaySubscriptionId   String?   @unique
+  razorpayPlanId           String?
+  razorpayCurrentPeriodEnd DateTime?
 
   // Plan level (FREE, PRO, EXPERT)
   plan          String    @default("FREE")

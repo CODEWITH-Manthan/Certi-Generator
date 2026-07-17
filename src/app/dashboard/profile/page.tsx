@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
   const handleManageSubscription = async () => {
     try {
-      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const res = await fetch("/api/razorpay/portal", { method: "POST" });
       if (!res.ok) throw new Error("Portal error");
       const { url } = await res.json();
       window.location.href = url;

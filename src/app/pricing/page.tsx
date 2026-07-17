@@ -2,24 +2,73 @@
 
 import { Check } from "lucide-react";
 import { useState } from "react";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubscribe = async (priceId: string, planName: string) => {
+  const handleSubscribe = async (planId: string, planName: string) => {
     setLoadingPlan(planName);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      // 1. Create a subscription on the backend
+      const res = await fetch("/api/razorpay/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ planId }),
       });
       const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.detail || "Failed to start checkout");
+      
+      if (!data.subscriptionId) {
+        alert(data.detail || "Failed to create subscription");
+        setLoadingPlan(null);
+        return;
       }
+
+      // 2. Initialize Razorpay Checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+        subscription_id: data.subscriptionId,
+        name: "Certi-Generator",
+        description: `${planName} Plan Subscription`,
+        handler: async function (response: any) {
+          try {
+            // 3. Verify the session and activate the plan
+            const verifyRes = await fetch("/api/razorpay/verify-session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_subscription_id: response.razorpay_subscription_id,
+                razorpay_signature: response.razorpay_signature,
+                planId: planId,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              // Redirect to dashboard on success
+              router.push("/dashboard");
+              router.refresh();
+            } else {
+              alert(verifyData.detail || "Payment verification failed");
+            }
+          } catch (err) {
+            alert("Error verifying payment");
+          }
+        },
+        theme: {
+          color: "#FFD60A", // Match our brand color (yellow-400)
+        },
+      };
+
+      const rzp1 = new (window as any).Razorpay(options);
+      rzp1.on("payment.failed", function (response: any) {
+        alert(response.error.description);
+      });
+      rzp1.open();
+
     } catch (err) {
       alert("Error starting checkout");
     } finally {
@@ -29,6 +78,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f0] p-6">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="max-w-5xl mx-auto py-12">
         <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 text-center">Upgrade Your Plan</h1>
         <p className="text-center font-bold text-xl mb-12">More certificates. More power.</p>
@@ -45,7 +95,7 @@ export default function PricingPage() {
               <li className="flex items-center gap-2"><Check className="text-black" /> Email Support</li>
             </ul>
             <button
-              onClick={() => handleSubscribe(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO!, "PRO")}
+              onClick={() => handleSubscribe(process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_PRO!, "PRO")}
               disabled={loadingPlan === "PRO"}
               className="brut-btn brut-btn-black w-full py-4 text-lg border-2 disabled:opacity-50"
             >
@@ -64,7 +114,7 @@ export default function PricingPage() {
               <li className="flex items-center gap-2"><Check className="text-black" /> 24/7 Priority Support</li>
             </ul>
             <button
-              onClick={() => handleSubscribe(process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_EXPERT!, "EXPERT")}
+              onClick={() => handleSubscribe(process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID_EXPERT!, "EXPERT")}
               disabled={loadingPlan === "EXPERT"}
               className="brut-btn brut-btn-black w-full py-4 text-lg border-2 disabled:opacity-50"
             >

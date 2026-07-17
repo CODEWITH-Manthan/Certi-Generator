@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { Dashboard } from "@/components/Dashboard";
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
-import UpgradeSuccess from "./UpgradeSuccess";
 import { User } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -31,10 +30,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f0] flex flex-col">
-      {/* Detects ?session_id= after Stripe checkout and updates plan */}
-      <Suspense fallback={null}>
-        <UpgradeSuccess />
-      </Suspense>
 
       <header className="bg-black text-white p-4 flex justify-between items-center border-b-4 border-black sticky top-16 z-40">
         <div className="flex gap-3 items-center flex-wrap">
